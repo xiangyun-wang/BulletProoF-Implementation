@@ -31,7 +31,7 @@ int main(void)
     {
         uint64_t result = 0x0;
         uint64_t shift = 1;
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 4; j++)
         {
             uint64_t value = rc(7*i + j);
             result |=  value << (shift - 1);
