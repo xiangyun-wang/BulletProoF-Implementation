@@ -2,6 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_arth.all;
 
+-- By Alfred
+
 entity rho_pi is
 
   port (
