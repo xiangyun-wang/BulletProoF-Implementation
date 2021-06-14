@@ -1,17 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_arth.all;
+use ieee.numeric_std.all;
 
 -- By Alfred
 
 entity SHA3_Absorb is
 
   port (
-    rst : std_logic;
-    message_in: std_logic_vector (199 downto 0);
+    message_in: in std_logic_vector (199 downto 0);
     --message_in_ready: std_logic;
-    round_constant: std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level file
-    message_out: std_logic_vector(199 downto 0)
+    round_constant: in std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level file
+    message_out: out std_logic_vector(199 downto 0)
     );
 
 end SHA3_Absorb;
@@ -27,6 +26,7 @@ architecture rtl of SHA3_Absorb is
   type state is array ((row_max-1) downto 0) of plane;
 
   signal A, B : state;
+  signal sum_sheet : plane;
   signal theta_in, theta_out, pi_in, pi_out, rho_in, rho_out, chi_in, chi_out, iota_in, iota_out, pre_output: state;
 
 begin
@@ -114,7 +114,7 @@ rho_out(1)(4)(3 downto 0) <= rho_in(1)(4)(7 downto 4);  --(1,4)
 rho_out(1)(4)(7 downto 4) <= rho_in(1)(4)(3 downto 0);
 
 rho_out(2)(0)(4 downto 0) <= rho_in(2)(0)(7 downto 3);  --(2,0)
-rho_out(2)(0)(7 downto 5) <= rho_in(2)(0)(4 downto 0);
+rho_out(2)(0)(7 downto 5) <= rho_in(2)(0)(2 downto 0);
 
 rho_out(2)(1)(5 downto 0) <= rho_in(2)(1)(7 downto 2);  --(2,1)
 rho_out(2)(1)(7 downto 6) <= rho_in(2)(1)(1 downto 0);
@@ -156,7 +156,7 @@ rho_out(4)(3)(7 downto 0) <= rho_in(4)(3)(7 downto 0);  --(4,3)
 --rho_out(4)(3)(7 downto ) <= rho_in(4)(3)( downto 0);
 
 rho_out(4)(4)(1 downto 0) <= rho_in(4)(4)(7 downto 6);  --(4,4)
-rho_out(4)(4)(7 downto 6) <= rho_in(4)(4)(5 downto 0);
+rho_out(4)(4)(7 downto 2) <= rho_in(4)(4)(5 downto 0);
 
 ------------------ pi -------------
 r300: for i in 0 to 4 generate
@@ -193,7 +193,7 @@ end generate;
 
 -- lane 1 to 4 of plane 0
 r510: for j in 1 to 4 generate
-  iota(0)(j) <= iota_in(0)(j);
+  iota_out(0)(j) <= iota_in(0)(j);
 end generate;
 
 -- output reformate
