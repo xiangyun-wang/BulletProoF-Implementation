@@ -2,7 +2,7 @@
 #include <math.h>
 
 int main(){
-    int buf_size = 144;
+    int buf_size = 72;
     int counter = 0;
     int counter_limit = buf_size/72;
     int round_count = 0;
@@ -22,6 +22,8 @@ int main(){
     // parse
 
     int nvm_data[buf_size] = {0};
+    nvm_data[31] = 1;
+    nvm_data[63] = 1;
 
     while(counter < counter_limit){
 
@@ -117,6 +119,14 @@ int main(){
       }
       round_count = 0;
       councter++;
+    }
+
+    for (int i = 0; i<5; i++){
+        for (int j = 0; j<5; j++){
+            for (int k = 0; k<8; k++){
+                printf("%d,",iota_out[i][j][k]);
+            }
+        }
     }
 
 
