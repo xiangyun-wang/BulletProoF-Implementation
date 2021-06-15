@@ -24,6 +24,7 @@ proc AddWaves {} {
 		add wave -position end sim:/SHA3_tb/hash_out
 		add wave -position end sim:/SHA3_tb/message_out_checker
 		add wave -position end sim:/SHA3_tb/round_constant_checker
+		add wave -position end sim:/SHA3_tb/absorb_debug
 
 }
 

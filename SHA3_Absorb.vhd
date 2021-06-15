@@ -7,6 +7,7 @@ use ieee.numeric_std.all;
 entity SHA3_Absorb is
 
   port (
+    message_debug : out std_logic_vector(199 downto 0);
     message_in: in std_logic_vector (199 downto 0);
     --message_in_ready: std_logic;
     round_constant: in std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level file
@@ -24,12 +25,16 @@ architecture rtl of SHA3_Absorb is
   --type lane is array ((lane_max-1) downto 0) of std_logic;
   type plane is array ((column_max-1) downto 0) of std_logic_vector ((lane_max-1) downto 0);
   type state is array ((row_max-1) downto 0) of plane;
+  --type plane is array (0 to (column_max-1)) of std_logic_vector ((lane_max-1) downto 0);
+  --type state is array (0 to (row_max-1)) of plane;
 
   signal A, B : state;
-  signal sum_sheet : plane;
+  signal sum_sheet,total_sum : plane;
   signal theta_in, theta_out, pi_in, pi_out, rho_in, rho_out, chi_in, chi_out, iota_in, iota_out, pre_output: state;
 
 begin
+
+--message_debug <= theta_out;
 
 theta_in <= A;
 rho_in <= theta_out;
@@ -45,7 +50,8 @@ pre_output <= iota_out;
 -- parse the input 200 bits into 5*5*8 3D array
 r000: for i in 0 to 4 generate
   r001: for j in 0 to 4 generate
-    A(i)(j)(7 downto 0) <= message_in ((i*40+(j+1)*8-1) downto (i*40+j*8));
+    --A(i)(j)(7 downto 0) <= message_in ((i*40+(j+1)*8-1) downto (i*40+j*8));
+    A(i)(j)(7 downto 0) <= message_in (199-(i*40+j*8) downto 199-(i*40+(j+1)*8-1));
   end generate;
 end generate;
 
@@ -54,6 +60,23 @@ end generate;
 r100: for x in 0 to 4 generate
         sum_sheet(x) <= theta_in(0)(x) xor theta_in(1)(x) xor theta_in(2)(x) xor theta_in(3)(x) xor theta_in(4)(x);
  end generate;
+
+ debug_sum1: for x in 1 to 3 generate
+   total_sum(x)(0) <= sum_sheet(x-1)(0) xor sum_sheet(x+1)(7);
+     debug_sum3: for k in 1 to 7 generate
+       total_sum(x)(k) <= sum_sheet(x - 1)(k) xor sum_sheet(x + 1)(k - 1);
+    end generate;
+end generate;
+
+  total_sum(0)(0) <= sum_sheet(4)(0) xor sum_sheet(1)(7);
+    debug_sum3_1: for k in 1 to 7 generate
+      total_sum(0)(k) <= sum_sheet(4)(k) xor sum_sheet(1)(k - 1);
+   end generate;
+
+   total_sum(4)(0) <= sum_sheet(3)(0) xor sum_sheet(0)(7);
+     debug_sum3_2: for k in 1 to 7 generate
+       total_sum(4)(k) <= sum_sheet(3)(k) xor sum_sheet(0)(k - 1);
+    end generate;
 
 --rotate sum and compute the theta output
 --x from 1 to 3
@@ -202,5 +225,17 @@ r600: for i in 0 to 4 generate
     message_out ((i*40+(j+1)*8-1) downto (i*40+j*8)) <= pre_output(i)(j)(7 downto 0);
   end generate;
 end generate;
+
+debug: for i in 0 to 4 Generate
+   debug_i: for j in 0 to 4 Generate
+     message_debug (199-(i*40+j*8) downto 199-(i*40+(j+1)*8-1)) <= rho_out(i)(j)(7 downto 0);
+   end generate;
+ end generate;
+
+--debug_1: for i in 0 to 4 Generate
+    --message_debug (((i+1)*8-1) downto (i*8)) <= total_sum(i)(7 downto 0);
+--end generate;
+
+--message_debug(7 downto 0) <= total_sum(0);
 
 end rtl;

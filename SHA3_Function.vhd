@@ -5,6 +5,7 @@ use ieee.numeric_std.all;
 entity SHA3_Function is
 
   port(
+    absorb_debug : out std_logic_vector(199 downto 0);
     message_out_checker : out std_logic_vector(199 downto 0);
     round_constant_checker : out std_logic_vector(7 downto 0);
     clk: in std_logic;
@@ -33,6 +34,7 @@ signal state : SHA3_STATE := INIT;
 
 component SHA3_Absorb is
   port(
+    message_debug : out std_logic_vector(199 downto 0);
     message_in: in std_logic_vector (199 downto 0);
     --message_in_ready: std_logic;
     round_constant: in std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level file
@@ -45,6 +47,7 @@ begin
 
   hash: SHA3_Absorb
   port map(
+    message_debug => absorb_debug,
     message_in => message_in,
     round_constant => round_constant,
     message_out => message_out

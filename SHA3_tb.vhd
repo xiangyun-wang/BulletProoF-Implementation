@@ -10,6 +10,7 @@ ARCHITECTURE Behaviour of SHA3_tb IS
 	COMPONENT SHA3_Function IS
 
 	port(
+	absorb_debug : out std_logic_vector(199 downto 0);
 	message_out_checker: out std_logic_vector(199 downto 0);
 	round_constant_checker: out std_logic_vector(7 downto 0);
 	clk:				in std_logic;
@@ -36,10 +37,12 @@ ARCHITECTURE Behaviour of SHA3_tb IS
 		signal round_constant_checker : std_logic_vector(7 downto 0);
 
 		signal message_out_checker : std_logic_vector(199 downto 0);
+		signal absorb_debug : std_logic_vector(199 downto 0);
 
     BEGIN
 
     	dut: SHA3_Function port MAP(
+				absorb_debug => absorb_debug,
 				message_out_checker => message_out_checker,
 				round_constant_checker => round_constant_checker,
     		clk => clk,
@@ -64,7 +67,7 @@ ARCHITECTURE Behaviour of SHA3_tb IS
 				wait for clk_period*2;
      		data_ready <= '1';
 				more_data <= '1';
-				configuration_in <= "10000000000000000000000000000000";
+				configuration_in <= "00000000000000000000000000000001";
 				wait for clk_period*1;
 				more_data <= '0';
     		wait;

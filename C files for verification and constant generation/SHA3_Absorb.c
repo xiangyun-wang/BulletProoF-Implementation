@@ -15,28 +15,36 @@ int main(){
     int pi_out[5][5][8] = {0};
     int chi_out[5][5][8] = {0};
     int iota_out[5][5][8] = {0};
-    int sum[5][8] = {0}
+    int sum[5][8] = {0};
+    int sum_out[5][8] = {0};
     int cyclic_offset[5][5] = {{0,1,190,28,91},{36,300,6,55,276},{3,10,171,153,231},{105,45,15,21,136},{210,66,253,120,78}};
     int round_constant[18][8] = {{0,0,0,0,0,0,0,1},{1,0,0,0,0,0,1,0},{1,0,0,0,1,0,1,0},{0,0,0,0,0,0,0,0},{1,0,0,0,1,0,1,1},{0,0,0,0,0,0,0,1},{1,0,0,0,0,0,0,1},{0,0,0,0,1,0,0,1},{1,0,0,0,1,0,1,0},{1,0,0,0,1,0,0,0},{0,0,0,0,1,0,0,1},{0,0,0,0,1,0,1,0},{1,0,0,0,1,0,1,1},{1,0,0,0,1,0,1,1},{1,0,0,0,1,0,0,1},{0,0,0,0,0,0,1,1},{0,0,0,0,0,0,1,0},{1,0,0,0,0,0,0,0}};
+    int padded[200] = {0};
     //printf("hello world");
     // parse
 
-    int nvm_data[buf_size] = {0};
+    int nvm_data[buf_size];
     nvm_data[31] = 1;
     nvm_data[63] = 1;
 
+    for (int i = 0; i<72; i++){
+      padded[i] = nvm_data[i];
+    }
+    
     while(counter < counter_limit){
 
       while(round_count < 18){
-
+        
         for (int i = 0; i < 5; i++){
           for (int j = 0; j<5; j++){
             for (int k = 0; k<8; k++){
               // first two planes are for R, others for C
-              if(((i=0&&j<5) || (i=1&&j<4))&&round_count==0){
+              if(round_count==0){
                 // iota out do xor with new input, to theta_in
-                theta_in[i][j][k] = iota_out[i][j][k] ^ nvm_data[counter*72+i*40+j*8+k]
+                //printf("TEst test %d %d %d\n",i,j,k);
+                theta_in[i][j][k] = iota_out[i][j][k] ^ padded[i*40+j*8+k];
               }else{
+                //printf("another test %d %d %d\n",i,j,k);
                 // copy iota out to theta_in
                 theta_in[i][j][k] = iota_out[i][j][k];
               }
@@ -44,15 +52,26 @@ int main(){
           }
         }
 
+      // for (int i = 0; i<5; i++){
+      //    for (int j = 0; j<5; j++){
+      //        for (int k = 0; k<8; k++){
+      //            printf("%d,",theta_in[i][j][k]);
+      //        }
+      //    }
+      // }
+    printf("\n"); 
 
+        
 //-------------------------------------------------------------------------------------------------
         // theta
         //calculate the sum sheet
         for(int i = 0; i < 5; i++){
           for(int j = 0; j < 8; j++){
-            sum[i][j] = theta_in[i][0][j]^theta_in[i][1][j]^theta_in[i][2][j]^theta_in[i][3][j]^theta_in[i][4][j];
+            sum[i][j] = theta_in[0][i][j]^theta_in[1][i][j]^theta_in[2][i][j]^theta_in[3][i][j]^theta_in[4][i][j];
+            //printf("%d",sum[i][j]);
           }
         }
+        // printf("\n");
 
         for(int i = 0; i < 5; i++){
           for(int j = 0; j < 5; j++){
@@ -62,18 +81,24 @@ int main(){
               if(k_1 == 8){
                 k_1 == 0;
               }
-              if(i == 0){
-                theta_out[0][j][k] = theta_in[0][j][k] ^ sum[4][k] ^ sum[1][k_1];
+              if(j == 0){
+                theta_out[i][0][k] = theta_in[i][0][k] ^ (sum[4][k] ^ sum[1][k_1]);
+                sum_out[j][k] = sum[4][k] ^ sum[1][k_1];
               }
-              else if(i == 4){
-                theta_out[4][j][k] = theta_in[4][j][k] ^ sum[3][k] ^ sum[0][k_1];
+              else if(j == 4){
+                theta_out[i][4][k] = theta_in[i][4][k] ^ (sum[3][k] ^ sum[0][k_1]);
+                sum_out[j][k] = sum[3][k] ^ sum[0][k_1];
               }
               else{
-                theta_out[i][j][k] = theta_in[i][j][k] ^ sum[i - 1][k] ^ sum[i + 1][k_1];
+                theta_out[i][j][k] = theta_in[i][j][k] ^ (sum[j - 1][k] ^ sum[j + 1][k_1]);
+                sum_out[j][k] = sum[j-1][k] ^ sum[j+1][k_1];
               }
             }
           }
         }
+        
+      
+
           // rho
           for (int i = 0; i <5; i++){
               for (int j = 0; j<5; j++){
@@ -82,15 +107,28 @@ int main(){
                   }
               }
           }
+        printf("Round %d\n",round_count);
+        for (int i = 0; i<5; i++){
+         for (int j = 0; j<5; j++){
+             for (int k = 0; k<8; k++){
+                 printf("%d,",rho_out[i][j][k]);
+             }
+         }
+      }
+      printf("\n");
+          
           //pi
 
           for (int i = 0; i<5; i++){
               for (int j = 0; j<5; j++){
                   for (int k = 0; k<8; k++){
-                      pi_out[2*j+3*i][i][k] = rho_out[i][j][k];
+                      pi_out[(2*j+3*i)%5][i][k] = rho_out[i][j][k];
                   }
               }
           }
+
+        
+      
 
           //chi
           for (int i = 0; i<5; i++){
@@ -100,7 +138,7 @@ int main(){
                   }
               }
           }
-
+          // iota
           for (int i = 0; i<5; i++){
               for (int j = 0; j<5; j++){
                   for (int k = 0; k<8; k++){
@@ -114,21 +152,28 @@ int main(){
           }
 
 //-----------------------------------------------------------------------------
-
+        // printf("Round %d completed\n", round_count);
+        // for (int i = 0; i<5; i++){
+        //   for (int j = 0; j<5; j++){
+        //     for (int k = 0; k<8; k++){
+        //         printf("%d,",iota_out[i][j][k]);
+        //     }
+        //   }
+        // }
         round_count++;
       }
       round_count = 0;
-      councter++;
+      counter++;
     }
-
+    puts("final output");
     for (int i = 0; i<5; i++){
-        for (int j = 0; j<5; j++){
-            for (int k = 0; k<8; k++){
-                printf("%d,",iota_out[i][j][k]);
-            }
-        }
-    }
-
+         for (int j = 0; j<5; j++){
+             for (int k = 0; k<8; k++){
+              printf("%d,",iota_out[i][j][k]);
+             }
+         }
+     }
+    printf("\n");
 
     return 0;
 }
