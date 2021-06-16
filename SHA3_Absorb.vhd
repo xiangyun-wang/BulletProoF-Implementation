@@ -222,20 +222,19 @@ end generate;
 -- output reformate
 r600: for i in 0 to 4 generate
   r601: for j in 0 to 4 generate
-    message_out ((i*40+(j+1)*8-1) downto (i*40+j*8)) <= pre_output(i)(j)(7 downto 0);
+    message_out (199-(i*40+j*8) downto 199-(i*40+(j+1)*8-1)) <= pre_output(i)(j)(7 downto 0);
   end generate;
 end generate;
 
-debug: for i in 0 to 4 Generate
-   debug_i: for j in 0 to 4 Generate
-     message_debug (199-(i*40+j*8) downto 199-(i*40+(j+1)*8-1)) <= rho_out(i)(j)(7 downto 0);
-   end generate;
- end generate;
+-- debug: for i in 0 to 4 Generate
+--    debug_i: for j in 0 to 4 Generate
+--      message_debug (199-(i*40+j*8) downto 199-(i*40+(j+1)*8-1)) <= theta_out(i)(j)(7 downto 0);
+--    end generate;
+--  end generate;
 
---debug_1: for i in 0 to 4 Generate
-    --message_debug (((i+1)*8-1) downto (i*8)) <= total_sum(i)(7 downto 0);
---end generate;
-
+debug_1: for i in 0 to 4 Generate
+    message_debug (39-(i*8) downto 39-((i+1)*8-1)) <= total_sum(i)(7 downto 0);
+end generate;
 --message_debug(7 downto 0) <= total_sum(0);
 
 end rtl;

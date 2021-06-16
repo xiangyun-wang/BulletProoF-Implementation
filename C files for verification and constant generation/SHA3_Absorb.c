@@ -52,6 +52,7 @@ int main(){
           }
         }
 
+      // printf("Round: %d\n", round_count);
       // for (int i = 0; i<5; i++){
       //    for (int j = 0; j<5; j++){
       //        for (int k = 0; k<8; k++){
@@ -68,10 +69,10 @@ int main(){
         for(int i = 0; i < 5; i++){
           for(int j = 0; j < 8; j++){
             sum[i][j] = theta_in[0][i][j]^theta_in[1][i][j]^theta_in[2][i][j]^theta_in[3][i][j]^theta_in[4][i][j];
-            //printf("%d",sum[i][j]);
+            printf("%d",sum[i][j]);
           }
         }
-        // printf("\n");
+         printf("\n");
 
         for(int i = 0; i < 5; i++){
           for(int j = 0; j < 5; j++){
@@ -79,7 +80,7 @@ int main(){
               //right rotate k
               int k_1 = k + 1;
               if(k_1 == 8){
-                k_1 == 0;
+                k_1 = 0;
               }
               if(j == 0){
                 theta_out[i][0][k] = theta_in[i][0][k] ^ (sum[4][k] ^ sum[1][k_1]);
@@ -107,15 +108,7 @@ int main(){
                   }
               }
           }
-        printf("Round %d\n",round_count);
-        for (int i = 0; i<5; i++){
-         for (int j = 0; j<5; j++){
-             for (int k = 0; k<8; k++){
-                 printf("%d,",rho_out[i][j][k]);
-             }
-         }
-      }
-      printf("\n");
+        
           
           //pi
 
@@ -138,6 +131,10 @@ int main(){
                   }
               }
           }
+
+          
+
+          
           // iota
           for (int i = 0; i<5; i++){
               for (int j = 0; j<5; j++){
@@ -150,6 +147,15 @@ int main(){
                   }
               }
           }
+          printf("Round %d\n",round_count);
+        //for (int i = 0; i<5; i++){
+         for (int j = 0; j<5; j++){
+             for (int k = 0; k<8; k++){
+                 printf("%d,",sum_out[j][k]);
+             }
+         }
+      //}
+      printf("\n");
 
 //-----------------------------------------------------------------------------
         // printf("Round %d completed\n", round_count);

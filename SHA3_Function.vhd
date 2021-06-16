@@ -78,7 +78,7 @@ begin
             message_in <= padded xor internal_out;
             --round_count <= std_logic_vector(unsigned(round_count)+1);
           elsif(round_count = "10001") then
-            message_in <= message_out;
+            --message_in <= message_out;
             --tmp_out <= message_out;
             if (more_data = '0') then
               state <= DONE;
