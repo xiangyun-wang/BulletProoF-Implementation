@@ -39,6 +39,10 @@ ARCHITECTURE Behaviour of SHA3_tb IS
 		signal message_out_checker : std_logic_vector(199 downto 0);
 		signal absorb_debug : std_logic_vector(199 downto 0);
 
+		signal data_buf : std_logic_vector (63 downto 0);
+
+		signal data_count : std_logic_vector (31 downto 0) := (others => '0');
+
     BEGIN
 
     	dut: SHA3_Function port MAP(
@@ -68,6 +72,9 @@ ARCHITECTURE Behaviour of SHA3_tb IS
      		data_ready <= '1';
 				more_data <= '1';
 				configuration_in <= "00000000000000000000000000000001";
+				wait for clk_period*20;
+				data_ready <= '1';
+				configuration_in <= "10000000000000000000000000000000";
 				wait for clk_period*1;
 				more_data <= '0';
     		wait;

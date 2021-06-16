@@ -80,6 +80,7 @@ begin
           elsif(round_count = "10001") then
             --message_in <= message_out;
             --tmp_out <= message_out;
+            internal_out <= message_out;
             if (more_data = '0') then
               state <= DONE;
             else
@@ -90,7 +91,7 @@ begin
             message_in <= message_out;
           end if;
         when DONE =>
-          internal_out <= message_out;
+           hash_out <= internal_out;
       end case;
 
     end if;
@@ -107,10 +108,10 @@ padded <= configuration_in & configuration_in & configuration_in(31 downto 24) &
       --        message_out when (round_count /= "10010")else -----------
           --    message_in; ------------
 
-message_out_checker <= message_out;
+message_out_checker <= internal_out;
 round_constant_checker <= round_constant;
 -- round constant assign
-hash_out <= internal_out;
+--hash_out <= internal_out;
 round_constant <= "00000001" when (round_count = "00000") else
                   "10000010" when (round_count = "00001") else
                   "10001010" when (round_count = "00010") else

@@ -10,11 +10,11 @@ z2
 cModel Technology
 Z0 dC:/Users/alfre/OneDrive/Summer SURE 2021/Secure Boot/SHA3-Implementation
 Esha3_absorb
-Z1 w1623797019
+Z1 w1623821295
 Z2 DPx4 ieee 11 numeric_std 0 22 aU^R8eGcicLcUFIaBQSL>3
 Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z4 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
-!i122 380
+!i122 386
 R0
 Z5 8SHA3_Absorb.vhd
 Z6 FSHA3_Absorb.vhd
@@ -24,9 +24,9 @@ Va>=ll_FjN`0g^Qh9nG:l_1
 !s100 6Uci0?7a^WG@SChJf@QUI0
 Z7 OV;C;2020.1;71
 32
-Z8 !s110 1623803317
+Z8 !s110 1623821621
 !i10b 1
-Z9 !s108 1623803316.000000
+Z9 !s108 1623821621.000000
 Z10 !s90 -reportprogress|300|SHA3_Absorb.vhd|
 Z11 !s107 SHA3_Absorb.vhd|
 !i113 1
@@ -36,11 +36,11 @@ R2
 R3
 R4
 DEx4 work 11 sha3_absorb 0 22 a>=ll_FjN`0g^Qh9nG:l_1
-!i122 380
+!i122 386
 l35
 L19 222
-Vf_=3Q2FlcC4RjUT]?@;]W0
-!s100 5M@7]k6cZQVKAilHN7:0n0
+VM_YRF_a?67SJ3INMW75i=2
+!s100 n@GQAS;Mn8Hc;<5DbeA@43
 R7
 32
 R8
@@ -51,11 +51,11 @@ R11
 !i113 1
 R12
 Esha3_function
-Z13 w1623803308
+Z13 w1623821610
 R2
 R3
 R4
-!i122 381
+!i122 387
 R0
 Z14 8SHA3_Function.vhd
 Z15 FSHA3_Function.vhd
@@ -67,9 +67,9 @@ R7
 32
 R8
 !i10b 1
-Z16 !s108 1623803317.000000
-Z17 !s90 -reportprogress|300|SHA3_Function.vhd|
-Z18 !s107 SHA3_Function.vhd|
+R9
+Z16 !s90 -reportprogress|300|SHA3_Function.vhd|
+Z17 !s107 SHA3_Function.vhd|
 !i113 1
 R12
 Artl
@@ -77,29 +77,29 @@ R2
 R3
 R4
 DEx4 work 13 sha3_function 0 22 ]?dXG=7=ZIK;IEPV:WWD`3
-!i122 381
+!i122 387
 l46
-L21 114
-VeL@]a[f0LbM7Ug@MUL2[K3
-!s100 bhg3hFa:OPC:`h80:o<ni2
+L21 115
+VV<JO^8XK@L=QmRSkVbNcc0
+!s100 [@C1h6a9OTlG7;BnKmgZA3
 R7
 32
 R8
 !i10b 1
+R9
 R16
 R17
-R18
 !i113 1
 R12
 Esha3_tb
-Z19 w1623695200
+Z18 w1623820941
 R2
 R3
 R4
-!i122 382
+!i122 388
 R0
-Z20 8SHA3_tb.vhd
-Z21 FSHA3_tb.vhd
+Z19 8SHA3_tb.vhd
+Z20 FSHA3_tb.vhd
 l0
 L5 1
 VK[NlaLP39j@MR5;J^I<fU3
@@ -108,27 +108,27 @@ R7
 32
 R8
 !i10b 1
-R16
-Z22 !s90 -reportprogress|300|SHA3_tb.vhd|
-Z23 !s107 SHA3_tb.vhd|
+R9
+Z21 !s90 -reportprogress|300|SHA3_tb.vhd|
+Z22 !s107 SHA3_tb.vhd|
 !i113 1
 R12
 Abehaviour
 R2
 R3
 R4
-Z24 DEx4 work 7 sha3_tb 0 22 K[NlaLP39j@MR5;J^I<fU3
-!i122 382
-l42
-Z25 L8 69
-Z26 V3`]8n[CAM:_F]J20Y8VJ92
-Z27 !s100 ^:fzY1g30W4^b`XYh1RJ?2
+Z23 DEx4 work 7 sha3_tb 0 22 K[NlaLP39j@MR5;J^I<fU3
+!i122 388
+l46
+Z24 L8 76
+Z25 VJ[FDO>BLW^Nb<Fe@?>WB]3
+Z26 !s100 M6]:4f:PWiM<=Z:7RlHRJ3
 R7
 32
 R8
 !i10b 1
-R16
+R9
+R21
 R22
-R23
 !i113 1
 R12

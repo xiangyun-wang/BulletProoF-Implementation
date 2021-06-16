@@ -232,9 +232,9 @@ end generate;
 --    end generate;
 --  end generate;
 
-debug_1: for i in 0 to 4 Generate
-    message_debug (39-(i*8) downto 39-((i+1)*8-1)) <= total_sum(i)(7 downto 0);
-end generate;
+-- debug_1: for i in 0 to 4 Generate
+--     message_debug (39-(i*8) downto 39-((i+1)*8-1)) <= total_sum(i)(7 downto 0);
+-- end generate;
 --message_debug(7 downto 0) <= total_sum(0);
-
+message_debug <= message_in;
 end rtl;

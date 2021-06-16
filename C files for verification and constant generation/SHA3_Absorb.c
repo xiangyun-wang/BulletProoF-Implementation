@@ -2,9 +2,9 @@
 #include <math.h>
 
 int main(){
-    int buf_size = 72;
+    int buf_size = 64;
     int counter = 0;
-    int counter_limit = buf_size/72;
+    int counter_limit = buf_size/32;
     int round_count = 0;
     int input[200] = {0};
     int output[5][5][8] = {0};
@@ -25,14 +25,14 @@ int main(){
 
     int nvm_data[buf_size];
     nvm_data[31] = 1;
-    nvm_data[63] = 1;
+    nvm_data[32] = 1;
 
-    for (int i = 0; i<72; i++){
-      padded[i] = nvm_data[i];
-    }
+    
     
     while(counter < counter_limit){
-
+      for (int i = 0; i<72; i++){
+        padded[i] = nvm_data[i%32+counter*32];
+      }
       while(round_count < 18){
         
         for (int i = 0; i < 5; i++){
