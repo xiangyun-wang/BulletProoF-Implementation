@@ -1,31 +1,33 @@
-library ieee;
+-- Created by: Alfred Wang
+
+ibrary ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity SHA3_Function is
 
   port(
-    absorb_debug : out std_logic_vector(199 downto 0);
-    message_out_checker : out std_logic_vector(199 downto 0);
-    round_constant_checker : out std_logic_vector(7 downto 0);
+    absorb_debug : out std_logic_vector(199 downto 0); --debug
+    message_out_checker : out std_logic_vector(199 downto 0); --debug
+    round_constant_checker : out std_logic_vector(7 downto 0); --debug
     clk: in std_logic;
     data_ready: in std_logic;
     more_data: in std_logic;
     rst: in std_logic;
-    configuration_in : in std_logic_vector (31 downto 0);
+    configuration_in : in std_logic_vector (31 downto 0); -- simulate configuration read from ICAP
     data_request: out std_logic;
-    hash_out: out std_logic_vector (199 downto 0) := (others => '0')
+    hash_out: out std_logic_vector (199 downto 0) := (others => '0') -- output
   );
 end SHA3_Function;
 
 architecture rtl of SHA3_Function is
 
-signal zeros: std_logic_vector(199 downto 0) := (others =>'0');
+signal zeros: std_logic_vector(199 downto 0) := (others =>'0'); --zero vector
 signal round_constant : std_logic_vector(7 downto 0);
 signal message_in : std_logic_vector(199 downto 0);
 signal message_out: std_logic_vector(199 downto 0);
 signal round_count : std_logic_vector(4 downto 0) := "11111";
-signal padded : std_logic_vector (199 downto 0) := (others =>'0');
+signal padded : std_logic_vector (199 downto 0) := (others =>'0'); -- padded message
 signal internal_reset : std_logic := '0';
 signal internal_out : std_logic_vector (199 downto 0) := (others => '0');
 
@@ -36,7 +38,6 @@ component SHA3_Absorb is
   port(
     message_debug : out std_logic_vector(199 downto 0);
     message_in: in std_logic_vector (199 downto 0);
-    --message_in_ready: std_logic;
     round_constant: in std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level file
     message_out: out std_logic_vector (199 downto 0)
   );
@@ -59,11 +60,11 @@ begin
       state <= INIT;
     elsif(rising_edge(clk)) then
       case state is
-        when INIT =>
+        when INIT => --init
           internal_reset <= '1';
           message_in <= zeros;
           state <= LOAD;
-        when LOAD =>
+        when LOAD => -- load data
           internal_reset <= '0';
           data_request <= '1';
           if data_ready = '1' then
@@ -71,17 +72,14 @@ begin
             state <= RUN;
             round_count <= "11111";
           end if;
-        when RUN =>
+        when RUN => -- hash process
           data_request <= '0';
           if (round_count = "11111") then
             round_count <= "00000";
             message_in <= padded xor internal_out;
-            --round_count <= std_logic_vector(unsigned(round_count)+1);
           elsif(round_count = "10001") then
-            --message_in <= message_out;
-            --tmp_out <= message_out;
             internal_out <= message_out;
-            if (more_data = '0') then
+            if (more_data = '0') then -- if no more data, jump to done
               state <= DONE;
             else
               state <= LOAD;
@@ -101,12 +99,7 @@ begin
 padded <= configuration_in & configuration_in & configuration_in(31 downto 24) & zeros(127 downto 0);
 
 -- PUF mode????
--- this part needs to be in the clk
---tmp_out <= message_out;
---message_in <= zeros when (internal_reset = '1') else ----------------
-  --            (padded xor tmp_out) when (round_count = "00000") else ----------
-      --        message_out when (round_count /= "10010")else -----------
-          --    message_in; ------------
+
 
 message_out_checker <= internal_out;
 round_constant_checker <= round_constant;
