@@ -21,8 +21,8 @@ entity carry_chain is
     Port ( 
     mpsclk      : in  std_logic;
     path        : in  std_logic;
-    TVal        : out integer;
-    test1       : out std_logic_vector(127 downto 0)
+    TVal        : out integer
+    --test1       : out std_logic_vector(127 downto 0)
     );
 end carry_chain;
 
@@ -34,8 +34,8 @@ architecture Behavioral of carry_chain is
         CO          : out std_logic_vector(3 downto 0);
         O           : out std_logic_vector(3 downto 0);
     
-        CI          : in  std_ulogic := '-';
-        CYINIT      : in  std_ulogic := '-';
+        CI          : in  std_ulogic := '0';
+        CYINIT      : in  std_ulogic := '0';
         DI          : in  std_logic_vector(3 downto 0);
         S           : in  std_logic_vector(3 downto 0)
       );
@@ -44,7 +44,7 @@ architecture Behavioral of carry_chain is
     --D flip-flop primitive
     component FDRE is
         generic(
-        INIT : bit := '0';
+        INIT : bit := '1';
         IS_C_INVERTED : bit := '0';
         IS_D_INVERTED : bit := '0';
         IS_R_INVERTED : bit := '0'
@@ -86,9 +86,10 @@ begin
 --    end generate;
     
 process(mpsclk)
-    variable count: integer := 0;
+    variable count: integer range 0 to 128;
     begin
-    if(rising_edge(mpsclk)) then   
+    if(rising_edge(mpsclk)) then
+        count := 0;   
         for i in 0 to 31 loop
             for j in 0 to 3 loop
                 if(FF_out(i)(j) = '0') then
