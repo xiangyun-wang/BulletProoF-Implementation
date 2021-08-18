@@ -1,4 +1,2 @@
 # BulletProoF-Implementation
-Currently, TDC and testpath are integrated. SHA3 and ICAP integration are on the way.
-
-The integrated TDC with testpath is in the Calibration/Calibration_Real folder. 
+ Documentation will hopefully be done before 2021/08/20
