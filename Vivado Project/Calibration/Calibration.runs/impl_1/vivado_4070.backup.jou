@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2020.2 (64-bit)
+# SW Build 3064766 on Wed Nov 18 09:12:47 MST 2020
+# IP Build 3064653 on Wed Nov 18 14:17:31 MST 2020
+# Start of session at: Wed Jul 14 21:46:34 2021
+# Process ID: 4070
+# Current directory: /media/psf/Home/OneDrive/Summer SURE 2021/Secure Boot/Vivado_Project/Calibration/Calibration.runs/impl_1
+# Command line: vivado -log Calibrate.vdi -applog -product Vivado -messageDb vivado.pb -mode batch -source Calibrate.tcl -notrace
+# Log file: /media/psf/Home/OneDrive/Summer SURE 2021/Secure Boot/Vivado_Project/Calibration/Calibration.runs/impl_1/Calibrate.vdi
+# Journal file: /media/psf/Home/OneDrive/Summer SURE 2021/Secure Boot/Vivado_Project/Calibration/Calibration.runs/impl_1/vivado.jou
+#-----------------------------------------------------------
+source Calibrate.tcl -notrace
