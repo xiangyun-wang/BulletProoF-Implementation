@@ -13,3 +13,5 @@ There are two Vivado project in this folder. [Calibration](https://github.com/xi
 ## Usage
 ### MCS Files
 MCS files can be directly loaded onto the Arty A7 board for testing. [Calibration.mcs](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/MCS%20files/Calibration.mcs) is used for MPS calibration, and the port mapping can be found in the constraint file (.xdc) provided in the Vivado Project Folder([HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/Vivado%20Project/Calibration/Arty-A7-100-Master.xdc)). [E300ArtyDevKitFPGAChip.mcs](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/MCS%20files/E300ArtyDevKitFPGAChip.mcs) is a SiFive soft-core RISC-V processor. 
+### Vivado Project
+Try to import the downloaded project into Vivado at first, to see if can work. If it cannot work, simply extract all the VHDL files from the project (or you can find all the VHDL files [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/tree/main/VHDL)), then create a new Vivado project. 
