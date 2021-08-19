@@ -1,6 +1,6 @@
 # BulletProoF-Implementation
 ## Introduction
-This project focus on the implementation of a secure boot method for FPGAs, according to ![this](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/BulletProoF%20Paper.pdf)
+This project focus on the implementation of a secure boot method for FPGAs, according to [this](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/BulletProoF%20Paper.pdf)
 ## Repo Structure
 ## Usage
 ## Calibration
