@@ -129,7 +129,7 @@ begin
           if (PUF_start = '1') then   -- if timing process can be started, go to load
             state <= LOAD;
           end if;
-        when LOAD => -- load data -- need to fix
+        when LOAD => -- load data
            Launch <= '0';
            hash_reset <= '0';
            data_request <= '1';
