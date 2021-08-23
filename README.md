@@ -16,4 +16,4 @@ MCS files can be directly loaded onto the Arty A7 board for testing. [Calibratio
 ### Vivado Project
 Try to import the downloaded project into Vivado at first, to see if can work. If it cannot work, simply extract all the VHDL files from the project (or you can find all the VHDL files [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/tree/main/VHDL)), then create a new Vivado project. 
 ## Detailed Documentation For Timing Data Generation Integration
-A detailed report and decumentation is provided [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/ECSE%20013%20SURE%20Documentation.pdf). It containes explanations for the implementation of the timing data generation, and file explanation for each of the HDL file used.
+A detailed report and documentation is provided [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/ECSE%20013%20SURE%20Documentation.pdf). It containes explanations for the implementation of the timing data generation, and file explanation for each of the HDL file used.
