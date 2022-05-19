@@ -65,6 +65,11 @@ component KState is
   );
 end component;
 
+--------- need ring oscillator
+
+-- need to port ring oscillator and using vivado clk wizard to get deried frequency
+-- how to estimate desire frequency???
+
 
 signal TDC_reset : std_logic;
 signal Get_Calibrated_Points : std_logic;
