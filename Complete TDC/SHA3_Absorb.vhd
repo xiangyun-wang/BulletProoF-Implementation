@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 entity SHA3_Absorb is
 
   port (
-    message_debug : out std_logic_vector(199 downto 0); -- debug
+    --message_debug : out std_logic_vector(199 downto 0); -- debug
     message_in: in std_logic_vector (199 downto 0);
     --message_in_ready: std_logic;
     round_constant: in std_logic_vector (7 downto 0);  -- all the round constant will be stored in the upper level hdl file
@@ -210,5 +210,5 @@ r600: for i in 0 to 4 generate
   end generate;
 end generate;
 
-message_debug <= message_in; -- debug
+--message_debug <= message_in; -- debug
 end rtl;
