@@ -24,12 +24,18 @@ int main(){
     // parse
 
     int nvm_data[buf_size];
+    for(int i = 0; i < 64; i++){
+       nvm_data[i]=0; 
+    }
+    //memset(nvm_data, 0, 64);
     nvm_data[31] = 1;
     nvm_data[32] = 1;
 
-    
-    
-    while(counter < counter_limit){
+    for(int i = 0; i < 64; i++){
+      printf("%d ",nvm_data[i]); 
+    } 
+   printf("\n");  
+    while(counter < 2){
       for (int i = 0; i<72; i++){
         padded[i] = nvm_data[i%32+counter*32];
       }
