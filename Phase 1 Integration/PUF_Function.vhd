@@ -18,7 +18,7 @@ ENTITY PUF_Function is
     signal_measure : out std_logic;
     Point_Sel_PUF : out std_logic_vector(3 downto 0);
     --debug_hash : out std_logic_vector(199 downto 0);
-    
+    --debug_mux200 : out std_logic_vector(7 downto 0);
     --debug_round_constant : out std_logic_vector(7 downto 0);
     Launch_PUF : out std_logic
   );
@@ -29,7 +29,7 @@ architecture Behavioral of PUF_Function is
 
   signal round_cnt : integer := 0;
   signal out_mux_200to1 : integer := 0;
-  signal Point_Sel_tracker : integer;
+  signal Point_Sel_tracker : integer := 0;
   signal message_in_sha3 : std_logic_vector(199 downto 0);
   signal message_out_sha3 : std_logic_vector(199 downto 0) := (others => '0');
   signal round_constant_sha3 : std_logic_vector(7 downto 0);
@@ -49,7 +49,7 @@ architecture Behavioral of PUF_Function is
   signal v0 : std_logic_vector(199 downto 0);
   signal v1 : std_logic_vector(199 downto 0) := (others => '0');
 
-  type CTL_STAT is (HASH, Idel, HASH_PAUSE, PUF0_0, PUF0_1, PUF1,PUF_Delaunch, Save);
+  type CTL_STAT is (HASH, Idel, HASH_PAUSE, PUF0_0, PUF0_1, PUF1, Save);
 
   signal Controller_Status : CTL_STAT := Idel;
 
@@ -98,13 +98,13 @@ component mux200 is
      hash_mode => hash_mode
    );
    
-    mux200_1 : mux200
-   port map(
-     mux200_in => message_out_sha3,
-     mux200_out => signal_measure,
-     mux200_sel => out_mux_200to1_vec
+--    mux200_1 : mux200
+--   port map(
+--     mux200_in => message_out_sha3,
+--     mux200_out => signal_measure,
+--     mux200_sel => out_mux_200to1_vec
 
-   );
+--   );
    
    
     HASH_1 : process (clk)
@@ -141,22 +141,22 @@ component mux200 is
             load_msg_flag <= '0';
             hash_mode <= '0';
             reset <= '0';
-            Controller_Status <= PUF_Delaunch;
+            Controller_Status <= PUF1;
             Launch_PUF <= '1';
         when PUF0_1 =>
             LaunchMUXCtrl <= '1';
             load_msg_flag <= '1';
             hash_mode <= '0';
-            Controller_Status <= PUF_Delaunch;
+            Controller_Status <= PUF1;
             Launch_PUF <= '1';
             reset <= '0';
             -- need one more state??
         --when PUF_Launch =>
             --Launch_PUF <= '1';
             --Controller_Status <= PUF_Delaunch;
-        when PUF_Delaunch =>
-            Launch_PUF <= '0';
-            Controller_Status <= PUF1;
+        --when PUF_Delaunch =>
+            --Launch_PUF <= '0';
+            --Controller_Status <= PUF1;
         when PUF1 =>
             LaunchMUXCtrl <= '1';
             hash_mode <= '0';
@@ -166,11 +166,13 @@ component mux200 is
             --round_cnt <= 0;
         if Delay_PUF /= "00000000" and Delay_PUF /= "10000000" then
             Controller_Status <= SAVE;
+            --Point_Sel_Tracker <= 0;
         elsif Delay_PUF = "10000000" then
         --- this part neet further consideration ---
-            Point_Sel_Tracker <= Point_Sel_Tracker + 1; -- need to change
-            if Point_Sel_Tracker < 16 then
+            
+            if Point_Sel_Tracker /= 15 then
           -- take 200 to 1, measure again
+                Point_Sel_Tracker <= Point_Sel_Tracker + 1; -- need to change
                 if ICAP_PUF_sel = 0 then
                     Controller_Status <= PUF0_1;
                 else
@@ -178,8 +180,9 @@ component mux200 is
                 end if;
             else
                 Point_Sel_Tracker <= 0;
-                out_mux_200to1 <= out_mux_200to1 + 1;
-                if out_mux_200to1 < 72 then
+                
+                if out_mux_200to1 < 71 then
+                    out_mux_200to1 <= out_mux_200to1 + 1;
                     -- measure new 200to1
                     if ICAP_PUF_sel = 0 then
                         Controller_Status <= PUF0_1;
@@ -198,8 +201,9 @@ component mux200 is
             end if;
         else
             Point_Sel_Tracker <= 0;
-            out_mux_200to1 <= out_mux_200to1 + 1;
-            if out_mux_200to1 < 72 then
+            
+            if out_mux_200to1 < 71 then
+                out_mux_200to1 <= out_mux_200to1 + 1;
                 -- measure new 200to1
                 if ICAP_PUF_sel = 0 then
                     Controller_Status <= PUF0_1;
@@ -237,6 +241,7 @@ component mux200 is
             end if;
       
         when HASH =>
+          Point_Sel_Tracker <= 0;
           reset <= '0';
           if load_msg_flag = '1' then
             Controller_Status <= HASH_PAUSE;
@@ -273,6 +278,11 @@ component mux200 is
                     v1 xor padded; -- need to check
     
     out_mux_200to1_vec <= std_logic_vector(to_unsigned(out_mux_200to1,8));
+    
+    --debug_mux200 <= out_mux_200to1_vec;
+    signal_measure <= message_out_sha3(1);
+    
+    Point_Sel_PUF <= std_logic_vector(to_unsigned(Point_Sel_Tracker,4));
     
     round_constant_sha3 <= "00000001" when (round_cnt = 0) else
                       "10000010" when (round_cnt = 1) else

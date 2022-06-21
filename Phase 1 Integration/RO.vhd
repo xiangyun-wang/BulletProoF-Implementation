@@ -52,7 +52,7 @@ component LUT1 is
 end component;
 
 --signal output : std_logic;
-signal status_out : std_logic_vector (30 downto 0);
+signal status_out : std_logic_vector (46 downto 0);
 signal clk_internal : std_logic := '0';
 signal counter : integer := 0;
 attribute dont_touch of status_out : signal is true;
@@ -81,10 +81,10 @@ ro_loop: for i in 0 to 0 generate
 end generate;
 --first: LUT1 port map (I0 => status_out(2), O=>status_out(0));
 
-ro_delay: for i in 1 to 29 generate
+ro_delay: for i in 1 to 45 generate
     delay: LUT1 generic map (INIT => "10") port map (I0 => status_out(i), O => status_out(i+1));
 end generate;
-last : LUT1 generic map (INIT => "10") port map (I0 => status_out(30), O => status_out(0));
+last : LUT1 generic map (INIT => "10") port map (I0 => status_out(46), O => status_out(0));
 
 --status_out(0) <= (not rst) and (not status_out(6));
 --status_out(1) <= (not rst) and (not status_out(0));
@@ -95,23 +95,23 @@ last : LUT1 generic map (INIT => "10") port map (I0 => status_out(30), O => stat
 --status_out(6) <= (not rst) and (not status_out(5));
 --clk <= status_out(6);
 
-cnt:process (status_out(30))
+--cnt:process (status_out(30))
 
-    --variable counter: integer := 0;
+--    --variable counter: integer := 0;
 
-    begin
-      if rising_edge(status_out(30)) then
-        if (counter = 300) then
-          counter <= 0;
-          clk_internal <= not clk_internal;
-        else
-          counter <= counter + 1;
-        end if;
+--    begin
+--      if rising_edge(status_out(30)) then
+--        if (counter = 2) then
+--          counter <= 0;
+--          clk_internal <= not clk_internal;
+--        else
+--          counter <= counter + 1;
+--        end if;
       
-      end if;
+--      end if;
 
-end process;
+--end process;
 
---clk_internal <= status_out(6);
+clk_internal <= (status_out(46));
 
 end Behavioral;

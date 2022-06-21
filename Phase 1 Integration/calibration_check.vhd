@@ -21,8 +21,8 @@ entity calibration_check is
   Point_Sel_Calibration : out std_logic_vector(3 downto 0);
   TPsel : out std_logic_vector(4 downto 0);
   Launch_Calibration : out std_logic;
-  Calibration_Check_Succeed : out std_logic;
-  Calibration_Check_Fail : out std_logic
+  Calibration_Check_Succeed : out std_logic := '0';
+  Calibration_Check_Fail : out std_logic := '0'
   --debug_3 : out std_logic;
   --debug_1 : out std_logic;
   --debug_2 : out std_logic

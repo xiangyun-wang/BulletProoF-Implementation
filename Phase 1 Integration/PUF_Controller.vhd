@@ -16,6 +16,7 @@ entity PUF_Controller is
   -- );
   Port (
   clk_manual : in std_logic;
+  debug_clk : out std_logic;
   calibration_check_suc_debug : out std_logic;
   calibration_check_fail_debug : out std_logic;
   ICAP_msg_ready_debug : in std_logic;
@@ -27,7 +28,7 @@ entity PUF_Controller is
   debug_v1 : out std_logic_vector(4 downto 0);
   debug_v2 : out std_logic_vector(3 downto 0);
   debug_delay : out std_logic_vector(7 downto 0);
-  ICAP_msg : in std_logic_vector(31 downto 0);
+  --ICAP_msg : in std_logic_vector(31 downto 0);
   enrollment_mode : in std_logic
   --calibration_check : in std_logic
   );
@@ -47,6 +48,7 @@ component TDC is
    TPsel : in std_logic_vector(4 downto 0);
    Launch : in std_logic;  --btn 0
    Signal_Measure : in std_logic;   -- signal to be measured -- sw 1
+   path_debug : out std_logic;
    Delay_Out : out std_logic_vector(7 downto 0) -- IO 33 downto 26
 
    );
@@ -100,8 +102,8 @@ end component;
 -- how to estimate desire frequency???
 
 
-signal Calibration_Check_Succeed : std_logic;
-signal Calibration_Check_Fail : std_logic;
+signal Calibration_Check_Succeed : std_logic := '0';
+signal Calibration_Check_Fail : std_logic := '0';
 
 -- TDC signals
 --signal Calibration_Check : std_logic := '0';
@@ -110,11 +112,11 @@ signal Point_Sel_PUF : std_logic_vector(3 downto 0);
 signal Point_Sel : std_logic_vector(3 downto 0);
 signal TPsel : std_logic_vector(4 downto 0);
 signal Launch : std_logic;
-signal Launch_Calibration : std_logic;
+signal Launch_Calibration : std_logic := '0';
 signal Signal_Measure : std_logic;
 signal Delay_Out : std_logic_vector(7 downto 0);
 signal ICAP_msg_ready : std_logic;
---signal ICAP_msg : std_logic_vector(31 downto 0);
+signal ICAP_msg : std_logic_vector(31 downto 0);
 signal ICAP_msg_request : std_logic;
 -- SHA3 signals
 signal message_in_sha3 : std_logic_vector(199 downto 0);
@@ -125,7 +127,7 @@ signal clk : std_logic;
 signal ICAP_msg_all_finished : std_logic;
 --signal reset : std_logic;
 
-signal Launch_PUF : std_logic;
+signal Launch_PUF : std_logic := '0';
 --attribute dont_touch of Launch_PUF : signal is true;
 
 ------------------------- Component and Signal declaration ends --------------------
@@ -141,7 +143,8 @@ TDC_1 : TDC
     TPsel => TPsel,
     Launch => Launch,
     Signal_Measure => Signal_Measure,
-    Delay_Out => Delay_Out
+    Delay_Out => Delay_Out,
+    path_debug => debug_2
   );
 
 Ring_Osc : RO
@@ -190,11 +193,11 @@ port map(
 ---------------------- port map ends ---------------------------
 
 ------------- process begins -----------------
-Point_Sel <= Point_Sel_Calibration when Calibration_Check_Succeed = '0' else
-            Point_Sel_PUF;
+Point_Sel <= Point_Sel_PUF when Calibration_Check_Succeed = '1' else
+            Point_Sel_Calibration;
             
-Launch <= Launch_Calibration when Calibration_Check_Succeed = '0' else
-            Launch_PUF;
+Launch <= Launch_PUF when Calibration_Check_Succeed = '1' else
+            Launch_Calibration;
 ------- hash mode process end ---------
 
 ----------- process ends --------------
@@ -206,16 +209,21 @@ Launch <= Launch_Calibration when Calibration_Check_Succeed = '0' else
 
  --clk <= clk_10;
  clk <= clk_ro;
- 
+ debug_clk <= clk_ro;
  -- debug portion ---
  calibration_check_suc_debug <= Calibration_Check_Succeed;
  calibration_check_fail_debug <= Calibration_Check_Fail;
 
             
  ICAP_msg_ready <= ICAP_msg_ready_debug;
- --ICAP_msg <= "00000000000000000000000000000000" when ICAP_msg_ready = '0' else
-   --          "10101010101010101010101010101010";
-             
+ ICAP_msg <= "00000000000000000000000000000000" when ICAP_msg_ready = '0' else
+             "00000000000000000000000000000001";
+ 
+ debug_1 <= Signal_Measure;
+ 
+ debug_v1 <= TPsel;
+ debug_v2 <= Point_Sel;
+     
 ICAP_msg_request_debug <= ICAP_msg_request;
 
 ICAP_msg_all_finished <= ICAP_msg_all_finished_debug;
