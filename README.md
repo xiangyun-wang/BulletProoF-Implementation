@@ -6,8 +6,6 @@ This project focus on the implementation of a secure boot method for FPGAs, acco
 This folder containes the generated MCS files that can be directly loaded onto the FPGA board. Detailed explanation for this folder can be below in the Usage section.
 ### Support Files
 This folder containes all the files that are used to test function correctness and record testing data. Detailed explanatin for this folder can be found [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/Support%20Files/README.md).
-### VHDL
-This folder containes all VHDL files that are written for this project. Files are further sorted in the folder, and a detailed explanation for each sorted subfolder can be found [HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/VHDL/README.md).
 ### Phase 1 Integration Folder
 Delay data can be extracted from the customized SHA3 combo logic. All the VHDL files, constraint file and customized SHA3 IP are included. To reimplement phase 1, create a new project in Vivado and import all source files provided in this folder. Currently, ICAP is still not working, and delay data saving is still under implementation.  
 ## Usage
