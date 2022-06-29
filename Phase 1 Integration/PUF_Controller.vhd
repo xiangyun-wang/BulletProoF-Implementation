@@ -20,7 +20,7 @@ entity PUF_Controller is
   calibration_check_suc_debug : out std_logic;
   calibration_check_fail_debug : out std_logic;
   ICAP_msg_ready_debug : in std_logic;
-  ICAP_msg_request_debug : out std_logic;
+  --ICAP_msg_request_debug : out std_logic;
   ICAP_msg_all_finished_debug : in std_logic;
   debug_1 : out std_logic;
   debug_2 : out std_logic;
@@ -48,7 +48,7 @@ component TDC is
    TPsel : in std_logic_vector(4 downto 0);
    Launch : in std_logic;  --btn 0
    Signal_Measure : in std_logic;   -- signal to be measured -- sw 1
-   path_debug : out std_logic;
+   --path_debug : out std_logic;
    Delay_Out : out std_logic_vector(7 downto 0) -- IO 33 downto 26
 
    );
@@ -143,8 +143,8 @@ TDC_1 : TDC
     TPsel => TPsel,
     Launch => Launch,
     Signal_Measure => Signal_Measure,
-    Delay_Out => Delay_Out,
-    path_debug => debug_2
+    Delay_Out => Delay_Out
+    --path_debug => debug_2
   );
 
 Ring_Osc : RO
@@ -209,22 +209,22 @@ Launch <= Launch_PUF when Calibration_Check_Succeed = '1' else
 
  --clk <= clk_10;
  clk <= clk_ro;
- debug_clk <= clk_ro;
+ --debug_clk <= clk_ro;
  -- debug portion ---
- calibration_check_suc_debug <= Calibration_Check_Succeed;
- calibration_check_fail_debug <= Calibration_Check_Fail;
+ --calibration_check_suc_debug <= Calibration_Check_Succeed;
+ --calibration_check_fail_debug <= Calibration_Check_Fail;
 
             
  ICAP_msg_ready <= ICAP_msg_ready_debug;
  ICAP_msg <= "00000000000000000000000000000000" when ICAP_msg_ready = '0' else
              "00000000000000000000000000000001";
  
- debug_1 <= Signal_Measure;
+ --debug_1 <= Launch;
  
- debug_v1 <= TPsel;
- debug_v2 <= Point_Sel;
+ --debug_v1 <= TPsel;
+ --debug_v2 <= Point_Sel;
      
-ICAP_msg_request_debug <= ICAP_msg_request;
+--ICAP_msg_request_debug <= ICAP_msg_request;
 
 ICAP_msg_all_finished <= ICAP_msg_all_finished_debug;
 

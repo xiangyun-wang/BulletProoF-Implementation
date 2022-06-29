@@ -55,8 +55,8 @@ entity TDC is
     Signal_Measure : in std_logic;   -- signal to be measured -- sw 1
 
     Delay_Out : out std_logic_vector(7 downto 0); -- IO 33 downto 26
-    TPsel : in std_logic_vector(4 downto 0);
-    path_debug : out std_logic
+    TPsel : in std_logic_vector(4 downto 0)
+    --path_debug : out std_logic
 
     --Cal_Next_Step : in std_logic -- btn 3
 
@@ -147,7 +147,7 @@ path <= signal_measure when Calibration_Check_Succeed = '1' else
 
 MPSsel <= Point_Sel;
 
-path_debug <= path;
+--path_debug <= signal_measure;
 
 Delay_Out <= std_logic_vector(to_unsigned(TVal,8));
 

@@ -36,7 +36,7 @@ architecture Behavioral of PUF_Function is
   signal LaunchMUXCtrl : std_logic := '0';
   signal load_msg : std_logic_vector(71 downto 0);
   signal msg_after_and : std_logic_vector(71 downto 0);
-  signal hash_mode : std_logic := '1';
+  signal hash_mode : std_logic := '0';
   signal out_mux_200to1_vec : std_logic_vector(7 downto 0);
 
   signal reset : std_logic;
@@ -49,7 +49,7 @@ architecture Behavioral of PUF_Function is
   signal v0 : std_logic_vector(199 downto 0);
   signal v1 : std_logic_vector(199 downto 0) := (others => '0');
 
-  type CTL_STAT is (HASH, Idel, HASH_PAUSE, PUF0_0, PUF0_1, PUF1, Save);
+  type CTL_STAT is (HASH, Idel, HASH_PAUSE, PUF0_0, PUF0_1, PUF1, Save, check);
 
   signal Controller_Status : CTL_STAT := Idel;
 
@@ -82,7 +82,7 @@ component mux200 is
 
   begin
   
-  your_instance_name : SHA3_Absorb_0
+  SHA3_1 : SHA3_Absorb_0
    PORT MAP (
     message_in => message_in_sha3,
     round_constant => round_constant_sha3,
@@ -98,17 +98,18 @@ component mux200 is
      hash_mode => hash_mode
    );
    
---    mux200_1 : mux200
---   port map(
---     mux200_in => message_out_sha3,
---     mux200_out => signal_measure,
---     mux200_sel => out_mux_200to1_vec
+    mux200_1 : mux200
+   port map(
+     mux200_in => message_out_sha3,
+     mux200_out => signal_measure,
+     mux200_sel => out_mux_200to1_vec
 
---   );
+   );
    
    
     HASH_1 : process (clk)
     variable ICAP_PUF_sel : integer := 0;
+    variable save_simulation : integer := 0;
     begin
     if rising_edge(clk) and Calibration_Check_Succeed = '1' then
       case Controller_Status is
@@ -163,7 +164,10 @@ component mux200 is
             Launch_PUF <= '0';
             Load_msg_flag <= '0';
             reset <= '0';
+            Controller_Status <= check;
+----------- need to add another state-------------------------
             --round_cnt <= 0;
+        when check => 
         if Delay_PUF /= "00000000" and Delay_PUF /= "10000000" then
             Controller_Status <= SAVE;
             --Point_Sel_Tracker <= 0;
@@ -224,21 +228,31 @@ component mux200 is
     --- further consideration part end ----
         when SAVE =>
             -- some operation about save (wait how many cycles, addresses .....)
-            if out_mux_200to1 = 71 then
-                out_mux_200to1 <= 0;
-                hash_mode <= '1';
-                LaunchMUXCtrl <= '0';
-                load_msg_flag <= '1';
-                Controller_Status <= HASH;
-                round_cnt <= 0;
+            --Point_Sel_Tracker <= 0;
+            if save_simulation /= 3 then 
+                save_simulation := save_simulation +1;
+                Controller_Status <= SAVE;
             else
-                out_mux_200to1 <= out_mux_200to1 + 1;
-                if ICAP_PUF_sel = 0 then
-                   Controller_Status <= PUF0_1;
+                save_simulation := 0;
+                if out_mux_200to1 = 71 then
+                    out_mux_200to1 <= 0;
+                    hash_mode <= '1';
+                    LaunchMUXCtrl <= '0';
+                    load_msg_flag <= '1';
+                    Controller_Status <= HASH;
+                    round_cnt <= 0;
+                    Point_Sel_Tracker <= 0;
                 else
-                    Controller_Status <= PUF0_0;
+                    out_mux_200to1 <= out_mux_200to1 + 1;
+                    Point_Sel_Tracker <= 0;
+                    if ICAP_PUF_sel = 0 then
+                        Controller_Status <= PUF0_1;
+                    else
+                        Controller_Status <= PUF0_0;
+                    end if;
                 end if;
             end if;
+            
       
         when HASH =>
           Point_Sel_Tracker <= 0;
@@ -275,12 +289,12 @@ component mux200 is
     message_in_sha3  <= v0 when (LaunchMUXCtrl = '0' and load_msg_flag = '0') else
                     v0 xor padded when (LaunchMUXCtrl = '0' and load_msg_flag = '1') else
                     v1 when (LaunchMUXCtrl = '1' and load_msg_flag = '0') else
-                    v1 xor padded; -- need to check
+                    padded; -- need to check
     
     out_mux_200to1_vec <= std_logic_vector(to_unsigned(out_mux_200to1,8));
     
     --debug_mux200 <= out_mux_200to1_vec;
-    signal_measure <= message_out_sha3(1);
+    --signal_measure <= message_out_sha3(1);
     
     Point_Sel_PUF <= std_logic_vector(to_unsigned(Point_Sel_Tracker,4));
     
