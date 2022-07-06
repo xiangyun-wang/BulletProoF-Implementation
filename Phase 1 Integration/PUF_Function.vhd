@@ -20,6 +20,8 @@ ENTITY PUF_Function is
     --debug_hash : out std_logic_vector(199 downto 0);
     --debug_mux200 : out std_logic_vector(7 downto 0);
     --debug_round_constant : out std_logic_vector(7 downto 0);
+    write_en : out std_logic := '0';
+    PUF_Stop : in std_logic;
     Launch_PUF : out std_logic
   );
 
@@ -111,9 +113,10 @@ component mux200 is
     variable ICAP_PUF_sel : integer := 0;
     variable save_simulation : integer := 0;
     begin
-    if rising_edge(clk) and Calibration_Check_Succeed = '1' then
+    if rising_edge(clk) and Calibration_Check_Succeed = '1' and PUF_Stop = '0'then
       case Controller_Status is
         when Idel =>
+          write_en <= '0';
           LaunchMUXCtrl <= '0';
           reset <= '0';
           hash_mode <= '0';
@@ -171,7 +174,8 @@ component mux200 is
         if Delay_PUF /= "00000000" and Delay_PUF /= "10000000" then
             Controller_Status <= SAVE;
             --Point_Sel_Tracker <= 0;
-        elsif Delay_PUF = "10000000" then
+        else
+        --elsif Delay_PUF = "10000000" then
         --- this part neet further consideration ---
             
             if Point_Sel_Tracker /= 15 then
@@ -183,56 +187,64 @@ component mux200 is
                     Controller_Status <= PUF0_0;
                 end if;
             else
-                Point_Sel_Tracker <= 0;
+              Controller_Status <= SAVE;
+--                Point_Sel_Tracker <= 0;
                 
-                if out_mux_200to1 < 71 then
-                    out_mux_200to1 <= out_mux_200to1 + 1;
-                    -- measure new 200to1
-                    if ICAP_PUF_sel = 0 then
-                        Controller_Status <= PUF0_1;
-                    else
-                        Controller_Status <= PUF0_0;
-                    end if;
-                else
+--                if out_mux_200to1 < 71 then
+--                    out_mux_200to1 <= out_mux_200to1 + 1;
+--                    -- measure new 200to1
+--                    if ICAP_PUF_sel = 0 then
+--                        Controller_Status <= PUF0_1;
+--                    else
+--                        Controller_Status <= PUF0_0;
+--                    end if;
+--                else
                     -- go to hash (even if delay_out = 10000000)
-                    hash_mode <= '1';
-                    Controller_Status <= HASH;
-                    load_msg_flag <= '1';
-                    LaunchMUXCtrl <= '0';
-                    round_cnt <= 0;
-                    out_mux_200to1 <= 0;
-                end if;
+                    --Controller_Status <= SAVE;
+                    --hash_mode <= '1';
+                    --Controller_Status <= HASH;
+                    --load_msg_flag <= '1';
+                    --LaunchMUXCtrl <= '0';
+                    --round_cnt <= 0;
+                    --out_mux_200to1 <= 0;
+                --end if;
             end if;
-        else
-            Point_Sel_Tracker <= 0;
+--        else
+--            Point_Sel_Tracker <= 0;
             
-            if out_mux_200to1 < 71 then
-                out_mux_200to1 <= out_mux_200to1 + 1;
-                -- measure new 200to1
-                if ICAP_PUF_sel = 0 then
-                    Controller_Status <= PUF0_1;
-                else
-                    Controller_Status <= PUF0_0;
-                end if;
-            else
-          -- go to hash (even if delay_out = 10000000)
-                    hash_mode <= '1';
-                    Controller_Status <= HASH;
-                    load_msg_flag <= '1';
-                    LaunchMUXCtrl <= '0';
-                    round_cnt <= 0;
-                    out_mux_200to1 <= 0;
-            end if;
+--            if out_mux_200to1 < 71 then
+--                out_mux_200to1 <= out_mux_200to1 + 1;
+--                -- measure new 200to1
+--                if ICAP_PUF_sel = 0 then
+--                    Controller_Status <= PUF0_1;
+--                else
+--                    Controller_Status <= PUF0_0;
+--                end if;
+--            else
+--          -- go to hash (even if delay_out = 10000000)
+--                    hash_mode <= '1';
+--                    Controller_Status <= HASH;
+--                    load_msg_flag <= '1';
+--                    LaunchMUXCtrl <= '0';
+--                    round_cnt <= 0;
+--                    out_mux_200to1 <= 0;
+--            end if;
         end if;
 
     --- further consideration part end ----
         when SAVE =>
             -- some operation about save (wait how many cycles, addresses .....)
             --Point_Sel_Tracker <= 0;
-            if save_simulation /= 3 then 
+            if save_simulation /= 3 then
+                if save_simulation = 2 then
+                  write_en <= '0';
+                else
+                  write_en <= '1'; 
+                end if;
                 save_simulation := save_simulation +1;
                 Controller_Status <= SAVE;
             else
+                write_en <= '0';
                 save_simulation := 0;
                 if out_mux_200to1 = 71 then
                     out_mux_200to1 <= 0;

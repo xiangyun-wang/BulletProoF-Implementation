@@ -16,18 +16,20 @@ entity PUF_Controller is
   -- );
   Port (
   clk_manual : in std_logic;
-  debug_clk : out std_logic;
+  --debug_clk : out std_logic;
   calibration_check_suc_debug : out std_logic;
   calibration_check_fail_debug : out std_logic;
   ICAP_msg_ready_debug : in std_logic;
   --ICAP_msg_request_debug : out std_logic;
   ICAP_msg_all_finished_debug : in std_logic;
-  debug_1 : out std_logic;
-  debug_2 : out std_logic;
-  debug_3 : out std_logic;
-  debug_v1 : out std_logic_vector(4 downto 0);
-  debug_v2 : out std_logic_vector(3 downto 0);
-  debug_delay : out std_logic_vector(7 downto 0);
+  --debug_1 : out std_logic;
+  --debug_2 : out std_logic;
+  --debug_3 : out std_logic;
+  --debug_v1 : out std_logic_vector(4 downto 0);
+  --debug_v2 : out std_logic_vector(3 downto 0);
+  debug_address : in std_logic_vector(15 downto 0);
+  --debug_delay : out std_logic_vector(7 downto 0);
+  debug_data_out : out std_logic_vector(11 downto 0);
   --ICAP_msg : in std_logic_vector(31 downto 0);
   enrollment_mode : in std_logic
   --calibration_check : in std_logic
@@ -70,6 +72,8 @@ component PUF_Function is
     --debug_hash : out std_logic_vector(199 downto 0);
     
     --debug_round_constant : out std_logic_vector(7 downto 0);
+    write_en : out std_logic;
+    PUF_Stop : in std_logic;
     Launch_PUF : out std_logic
   );
 end component;
@@ -98,6 +102,16 @@ component calibration_check is
     Calibration_Check_Fail : out std_logic
   );
 end component;
+
+component dist_mem_gen_0 IS
+  PORT (
+    a : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+    d : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+    clk : IN STD_LOGIC;
+    we : IN STD_LOGIC;
+    spo : OUT STD_LOGIC_VECTOR(15 DOWNTO 0)
+  );
+END component;
 -- need to port ring oscillator and using vivado clk wizard to get deried frequency
 -- how to estimate desire frequency???
 
@@ -130,12 +144,29 @@ signal ICAP_msg_all_finished : std_logic;
 signal Launch_PUF : std_logic := '0';
 --attribute dont_touch of Launch_PUF : signal is true;
 
+-- bram signal 
+signal bram_data_out : std_logic_vector(15 downto 0);
+signal bram_address : std_logic_vector(15 downto 0);
+signal bram_address_int : integer := 0; 
+signal write_en : std_logic;
+signal bram_data_in : std_logic_vector(15 downto 0);
+signal PUF_Stop : std_logic := '0';
+
 ------------------------- Component and Signal declaration ends --------------------
 
 begin
 
 ----------------------- port map begins ------------------------
-
+------------------ newly added ----------------------
+bram_1 : dist_mem_gen_0
+  port map(
+    a => bram_address,
+    d => bram_data_in,
+    clk => clk,
+    we => write_en,
+    spo => bram_data_out
+  );
+------------------------- newly added ---------------------
 TDC_1 : TDC
   port map(
     Calibration_Check_Succeed => Calibration_Check_Succeed,
@@ -170,7 +201,7 @@ cal_check_1 : calibration_check
   
 PUF_1 : PUF_Function
 port map(
-  clk => clk_manual,
+  clk => clk,
   ICAP_msg_all_finished => ICAP_msg_all_finished,
   ICAP_msg_ready => ICAP_msg_ready,
   ICAP_msg => ICAP_msg,
@@ -179,6 +210,8 @@ port map(
   ICAP_msg_request => ICAP_msg_request,
   signal_measure => signal_measure,
   Point_Sel_PUF => Point_Sel_PUF,
+  write_en => write_en,
+  PUF_Stop => PUF_Stop,
   Launch_PUF => Launch_PUF
 
 
@@ -228,6 +261,28 @@ Launch <= Launch_PUF when Calibration_Check_Succeed = '1' else
 
 ICAP_msg_all_finished <= ICAP_msg_all_finished_debug;
 
-debug_delay <= Delay_Out;
+--debug_delay <= Delay_Out;
+debug_data_out <= bram_data_out(11 downto 0);
+
+--bram_address <= bram_address + 1
+---------------- newly added (need an extra file??? maybe???) ------------------------------
+bram_data_in <= "0000" & point_sel & delay_out;
+
+bram_control : process(write_en)
+begin
+    if (falling_edge(write_en)) then
+      if bram_address_int < 30000 then
+        bram_address_int <= bram_address_int + 1;
+        PUF_Stop <= '0';
+      else
+        bram_address_int <= 0;
+        PUF_Stop <= '1';
+      end if;
+    end if;
+end process bram_control;
+
+bram_address <= std_logic_vector(to_unsigned(bram_address_int,16)) when PUF_Stop = '0'else
+                debug_address;
+--------------------- newly added ---------------------------
 
 end Behavioral;
