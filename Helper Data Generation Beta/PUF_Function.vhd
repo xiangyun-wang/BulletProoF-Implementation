@@ -121,6 +121,7 @@ component mux200 is
     variable enrollment_vector1 : std_logic_vector(7 downto 0);
     variable enrollment_vector2 : std_logic_vector(7 downto 0);
     variable enrollment_vector3 : std_logic_vector(7 downto 0);
+    variable stability_check : std_logic := '0';
     begin
     if rising_edge(clk) and Calibration_Check_Succeed = '1' and PUF_Stop = '0'then
       case Controller_Status is
@@ -183,25 +184,26 @@ component mux200 is
             --round_cnt <= 0;
         when check => 
         if (Delay_PUF /= "00000000" and Delay_PUF /= "10000000") then
-            if enrollment_mode = '0' then 
+            if enrollment_mode = '0' or vector1_counter = 50 then 
                 Controller_Status <= SAVE;
+                Delay_Stable <= '1';
             else
             ---------------------- helper data generation start ------------------------
-                if enrollment_counter = 10 then 
-                    if vector1_counter = 10 then 
-                        Delay_Stable <= '1';
-                    else 
-                        Delay_Stable <= '0';
+                    if ICAP_PUF_sel = 0 then
+                        Controller_Status <= PUF0_1;
+                    else
+                        Controller_Status <= PUF0_0;
                     end if;
-                    Controller_Status <= SAVE;
-                else
+                    
                     if vector1_counter = 0 then
                         enrollment_vector1 := Delay_PUF;
                         vector1_counter := vector1_counter + 1;
+                        --stability_check := '1';
                     elsif enrollment_vector1 = Delay_PUF then
                         vector1_counter := vector1_counter + 1;
                     else
-                        vector1_counter := vector1_counter;
+                        Delay_Stable <= '0';
+                        Controller_Status <= SAVE;
                     end if;
 --                    elsif enrollment_vector1 /= Delay_PUF and vector2_counter = 0 then
 --                        enrollment_vector2 := Delay_PUF;
@@ -211,13 +213,13 @@ component mux200 is
 --                    else
                         
 --                    end if;
-                    enrollment_counter := enrollment_counter + 1;
-                    if ICAP_PUF_sel = 0 then
-                        Controller_Status <= PUF0_1;
-                    else
-                        Controller_Status <= PUF0_0;
-                    end if;
-                end if;
+                    --enrollment_counter := enrollment_counter + 1;
+--                    if ICAP_PUF_sel = 0 then
+--                        Controller_Status <= PUF0_1;
+--                    else
+--                        Controller_Status <= PUF0_0;
+--                    end if;
+               
             ---------------------- helper data generation end -------------------
             end if; 
             --Point_Sel_Tracker <= 0;
@@ -225,7 +227,7 @@ component mux200 is
         --elsif Delay_PUF = "10000000" then
         --- this part neet further consideration ---
             
-            if Point_Sel_Tracker /= 15 and enrollment_counter = 0 then
+            if Point_Sel_Tracker /= 15 and vector1_counter = 0 then
           -- take 200 to 1, measure again
                 Point_Sel_Tracker <= Point_Sel_Tracker + 1; -- need to change
                 if ICAP_PUF_sel = 0 then
@@ -235,6 +237,7 @@ component mux200 is
                 end if;
             else
               Controller_Status <= SAVE;
+              
               Delay_Stable <= '0';
 --                Point_Sel_Tracker <= 0;
                 
@@ -293,6 +296,7 @@ component mux200 is
                 Controller_Status <= SAVE;
             else
                 write_en <= '0';
+                --stability_check := '0';
                 save_simulation := 0;
                 vector1_counter := 0;
                 enrollment_counter := 0;
