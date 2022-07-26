@@ -11,8 +11,8 @@ Delay data can be extracted from the customized SHA3 combo logic. All the VHDL f
 ### Helper Data Generation Beta Folder
 This is an extension to Phase 1 Integration. Delay data can be stored in on-board BRAM, and stability of each delay data can be extracted and stored on-board as well. (Still under testing...)
 ### Helper Data Generation Beta Folder
-This is an extension to Phase 1 Integration and Helper Data Generation. With the delay data and stabilities, key can be generated. Customized SHA3 is reused for key generation. (Not tested, will be tested soon...)
-## Usage (Out of data, will be updated late August)
+This is an extension to Phase 1 Integration and Helper Data Generation. With the delay data and stabilities, key can be generated (hopefully). Customized SHA3 is reused for key generation. (Not tested, will be tested soon...)
+## Usage (Out of date, will be updated late August)
 ### MCS Files (currently out of date, will be updated late August)
 MCS files can be directly loaded onto the Arty A7 board for testing. [Calibration.mcs](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/MCS%20files/Calibration.mcs) is used for MPS calibration, and the port mapping can be found in the constraint file (.xdc) provided in the Vivado Project Folder([HERE](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/Vivado%20Project/Calibration/Arty-A7-100-Master.xdc)). (If you are interested in this, [E300ArtyDevKitFPGAChip.mcs](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/MCS%20files/E300ArtyDevKitFPGAChip.mcs) is a SiFive soft-core RISC-V processor).  
 ## Detailed Documentation For Timing Data Generation Integration (currently out of date, will be updated late August)
