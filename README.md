@@ -1,4 +1,4 @@
-# BulletProoF-Implementation
+# BulletProoF-Implementation 
 ## Introduction
 This project tries to reimplement the secure boot method of FPGA mentioned in [this paper](https://github.com/xiangyun-wang/BulletProoF-Implementation/blob/main/Paper.pdf) on an Arty A7-100T FPGA baord. On-board encryption key storage is avoided, and a Hardware-Embedded Delay Physical Unclonable Function(HELP) base key generation is used, to generated the encryption key each time when the FPGA board boots. 
 ## Repo Structure 
